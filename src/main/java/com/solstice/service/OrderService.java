@@ -18,7 +18,6 @@ import com.solstice.util.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import netscape.security.ForbiddenTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +77,7 @@ public class OrderService {
     OrderLineItem lineItem = lineItemRepository.getOne(lineId);
     if(!order.getOrderLineItems().contains(lineItem) || lineItem.getLineItemOrder().getOrderId() != orderId) {
       logger.error("Line item {} found but does not belong to order {}", lineId, orderId);
-      throw new ForbiddenTargetException();
+      throw new BadRequestException();
     }
     return lineItem;
   }
