@@ -1,4 +1,4 @@
-package com.solstice.client
+package com.solstice.client;
 
 import com.solstice.model.info.ProductInfo;
 import org.springframework.cloud.openfeign.FeignClient;

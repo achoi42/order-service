@@ -27,8 +27,6 @@ public class Order {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long orderId;
 
-//  @Value("${id.default.null}")
-//  private long defaultId;
   private long orderAccountId;
   private int orderNum;
   private LocalDate orderDate;
