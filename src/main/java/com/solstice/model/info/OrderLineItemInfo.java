@@ -1,7 +1,10 @@
 package com.solstice.model.info;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class OrderLineItemInfo {
 
+  private long lineItemShipmentId;
   private String productName;
   private int quantity;
 
@@ -9,9 +12,19 @@ public class OrderLineItemInfo {
 
   }
 
-  public OrderLineItemInfo(String productName, int quantity) {
+  @Autowired
+  public OrderLineItemInfo(long lineItemShipmentId, String productName, int quantity) {
+    this.lineItemShipmentId = lineItemShipmentId;
     this.productName = productName;
     this.quantity = quantity;
+  }
+
+  public long getLineItemShipmentId() {
+    return lineItemShipmentId;
+  }
+
+  public void setLineItemShipmentId(long lineItemShipmentId) {
+    this.lineItemShipmentId = lineItemShipmentId;
   }
 
   public String getProductName() {

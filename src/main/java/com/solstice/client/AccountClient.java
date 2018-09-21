@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient("account-service")
+@FeignClient(value = "account-service")
 @Component
 public interface AccountClient {
 

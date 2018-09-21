@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.solstice.model.domain.Order;
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +18,22 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(replace= Replace.NONE)
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@TestExecutionListeners({
+    DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class,
+    DbUnitTestExecutionListener.class
+})
+@DatabaseSetup("classpath:test-dataset.xml")
 public class OrderRepositoryIntegrationTest {
 
   @Autowired
@@ -83,8 +96,7 @@ public class OrderRepositoryIntegrationTest {
 
   @Test
   public void testFetchAccountOrders_validAccountId_success() {
-    Optional<List<Order>> response = orderRepository.findOrdersByOrderAccountId(11);
-    List<Order> outcome = response.get();
+    List<Order> outcome = orderRepository.findOrdersByOrderAccountId((long)11);
 
     assertThat(outcome.size(), is(1));
     assertThat(outcome.get(0).getOrderId(), is((long) 99));

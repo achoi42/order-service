@@ -51,6 +51,8 @@ public class OrderServiceIntegrationTest {
   @Test(expected = NotFoundException.class)
   @Transactional
   public void testFetchLineItems_invalidOrderId_failure() {
+    
+
     orderService.fetchLineItems(-1);
   }
 

@@ -5,10 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.solstice.model.domain.Order;
@@ -168,7 +165,6 @@ public class OrderServiceUnitTest {
     updated.setLineItemProductId(-3);
     updated.setQuantity(333);
     updated.setLineItemPrice(33.33);
-    updated.setLineItemOrder(order);
 
     when(orderRepository.findById(anyLong()))
         .thenReturn(Optional.of(order));
@@ -179,47 +175,14 @@ public class OrderServiceUnitTest {
     when(orderRepository.getOne(anyLong()))
         .thenReturn(order);
 
-    when(lineItemRepository.getOne(anyLong()))
-        .thenReturn(lineItem);
-
-    doNothing().when(lineItemRepository).updateLineItem(
-        anyLong(), anyInt(), anyDouble(), anyLong(), anyLong()
-    );
+    when(lineItemRepository.save(any()))
+        .thenReturn(updated);
 
     OrderLineItem outcome = orderService.updateLineItem(order.getOrderId(), lineItem.getLineItemId(), updated);
 
-    assertThat(outcome.getQuantity(), is(equalTo(lineItem.getQuantity())));
-    assertThat(outcome.getLineItemPrice(), is(equalTo(lineItem.getLineItemPrice())));
-    assertThat(outcome.getLineItemOrder().getOrderId(), is(equalTo(lineItem.getLineItemOrder().getOrderId())));
-  }
-
-  @Test
-  public void testUpdateLineItem_validOrderIdInvalidBody_success() {
-    Order rogue = new Order();
-    rogue.setOrderId(-999);
-
-    OrderLineItem toUpdate = new OrderLineItem();
-    toUpdate.setLineItemOrder(rogue);
-
-    when(orderRepository.findById(anyLong()))
-        .thenReturn(Optional.of(order));
-
-    when(lineItemRepository.findById(anyLong()))
-        .thenReturn(Optional.of(lineItem));
-
-    when(orderRepository.getOne(anyLong()))
-        .thenReturn(order);
-
-    when(lineItemRepository.getOne(anyLong()))
-        .thenReturn(lineItem);
-
-    doNothing().when(lineItemRepository).updateLineItem(
-        anyLong(), anyInt(), anyDouble(), anyLong(), anyLong()
-    );
-
-    OrderLineItem outcome = orderService.updateLineItem(-1,-1, toUpdate);
-
-    assertThat(outcome.getLineItemOrder().getOrderId(), is(equalTo(order.getOrderId())));
+    assertThat(outcome.getQuantity(), is(equalTo(updated.getQuantity())));
+    assertThat(outcome.getLineItemPrice(), is(equalTo(updated.getLineItemPrice())));
+    assertThat(outcome.getLineItemOrder().getOrderId(), is(equalTo(updated.getLineItemOrder().getOrderId())));
   }
 
   @Test

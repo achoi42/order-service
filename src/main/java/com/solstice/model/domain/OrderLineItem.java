@@ -2,6 +2,7 @@ package com.solstice.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -93,7 +94,8 @@ public class OrderLineItem {
     if(this.lineItemOrder.getOrderLineItems() == null) {
       logger.warn("Passed order " + lineItemOrder.getOrderId() + " with null address list");
     }
-    if(this.lineItemOrder.getOrderLineItems() != null && !this.lineItemOrder.getOrderLineItems().contains(this)) {
+    if(this.lineItemOrder.getOrderLineItems() != null &&
+        this.lineItemOrder.getOrderLineItems().stream().filter(i -> i.getLineItemId() == this.lineItemId).collect(Collectors.toList()).size() == 0) {
       this.lineItemOrder.addOrderLineItem(this);
       logger.info("Successfully added order " + lineItemOrder.getOrderId() + " to line item " + this.lineItemId);
     }

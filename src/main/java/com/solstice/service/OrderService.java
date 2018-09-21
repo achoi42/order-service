@@ -9,7 +9,6 @@ import com.solstice.model.domain.Order;
 import com.solstice.model.domain.OrderLineItem;
 import com.solstice.model.info.AddressInfo;
 import com.solstice.model.info.OrderLineItemInfo;
-import com.solstice.model.info.ProductInfo;
 import com.solstice.model.info.ShipmentInfo;
 import com.solstice.repository.OrderLineItemRepository;
 import com.solstice.repository.OrderRepository;
@@ -109,34 +108,16 @@ public class OrderService {
       logger.warn("Line item " + lineItemId + "'s parent order " + orderId + " does not match updated line item's order " + toUpdate.getLineItemOrder().getOrderId());
     }
 
-    // Disassociate old line item with order
-//    Order myOrder = orderRepository.getOne(orderId);
-//    OrderLineItem old = lineItemRepository.getOne(lineItemId);
-//    int oldIdx = myOrder.getOrderLineItems().indexOf(old);
-//    myOrder.removeOrderLineItem(old);
+//    OrderLineItem existing = lineItemRepository.getOne(lineItemId);
+//    existing.setLineItemProductId(toUpdate.getLineItemProductId());
+//    existing.setQuantity(toUpdate.getQuantity());
+//    existing.setLineItemPrice(toUpdate.getLineItemPrice());
+//    existing.setLineItemShipmentId(toUpdate.getLineItemShipmentId());
 
-    // Update old line item with new attributes in repository
-//    lineItemRepository.updateLineItem(
-//        toUpdate.getLineItemProductId(),
-//        toUpdate.getQuantity(),
-//        toUpdate.getLineItemPrice(),
-//        toUpdate.getLineItemShipmentId(),
-//        lineItemId
-//    );
+    toUpdate.setLineItemId(lineItemId);
+    toUpdate.setLineItemOrder(orderRepository.getOne(orderId));
 
-    // Associate updated line item with order
-//    OrderLineItem updated = lineItemRepository.getOne(lineItemId);
-//    myOrder.addOrderLineItem(updated);
-//    orderRepository.save(myOrder);
-
-    OrderLineItem existing = lineItemRepository.getOne(lineItemId);
-//    toUpdate.setLineItemId(lineItemId);
-//    toUpdate.setLineItemOrder(orderRepository.getOne(orderId));
-    existing.setLineItemProductId(toUpdate.getLineItemProductId());
-    existing.setQuantity(toUpdate.getQuantity());
-    existing.setLineItemPrice(toUpdate.getLineItemPrice());
-    existing.setLineItemShipmentId(toUpdate.getLineItemShipmentId());
-    return lineItemRepository.save(existing);
+    return lineItemRepository.save(toUpdate);
   }
 
   public void deleteLineItem(long orderId, long lineItemId) {
@@ -193,7 +174,7 @@ public class OrderService {
     List<OrderLineItemInfo> lineItemDetails = generateLineItemInfo(myOrder.getOrderLineItems());
     logger.info("Generated {} line item details for order {}", lineItemDetails.size(), orderId);
     List<ShipmentDetails> shipmentDetails = generateShipmentInfo(myOrder.getOrderLineItems());
-//    logger.info("Generated {} shipment details for line item {} for order {}", shipmentDetails.size(), shipmentDetails.get(0).getLineItemIds().get(0),orderId);
+    logger.info("Generated {} shipment details for order {}", shipmentDetails.size(),orderId);
 
     if(shippingAddress == null) {
       logger.error("Null address returned from account-service for account {} and address {}", accountId, addressId);
@@ -208,7 +189,6 @@ public class OrderService {
   }
 
   private OrderDetails generateOrderDetails(Order order, AddressInfo addressInfo, long accountId, List<OrderLineItemInfo> lineItemInfo, List<ShipmentDetails> shipmentDetails) {
-//    addressInfo.setAccountId(accountI);
     OrderDetails orderDetails = new OrderDetails(
         accountId,
         order.getOrderNum(),
@@ -302,11 +282,12 @@ public class OrderService {
   }
 
   private List<OrderLineItemInfo> generateLineItemInfo(List<OrderLineItem> lineItems) {
-    Resource<ProductInfo> fetched;
-    ProductInfo productInfo;
-    List<OrderLineItemInfo> lineItemDetails = lineItems.stream().map( o -> new OrderLineItemInfo(
-        productClient.getOne(o.getLineItemProductId()).getContent().getProductName(),
-        o.getQuantity())).collect(Collectors.toList());
+    List<OrderLineItemInfo> lineItemDetails = lineItems.stream().map( o ->
+      new OrderLineItemInfo(
+          o.getLineItemShipmentId(),
+          productClient.getOne(o.getLineItemProductId()).getProductName(),
+          o.getQuantity()))
+      .collect(Collectors.toList());
 
     return lineItemDetails;
   }

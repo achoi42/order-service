@@ -38,16 +38,12 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-jdbc')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.cloud:spring-cloud-starter-openfeign')
-//    https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-eureka-server.html
-//    compile('org.springframework.boot:spring-cloud-starter-netflix-eureka-client')
     compile('io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry')
-    compile('org.springframework.boot:spring-boot-starter-hateoas')
     compile('org.springframework.cloud:spring-cloud-starter-netflix-hystrix')
-//    compile('org.springframework.cloud:spring-cloud-starter-hystrix-dashboard')
-    compile('org.springframework.boot:spring-boot-starter-actuator')
     runtime('org.springframework.boot:spring-boot-devtools')
     runtime('mysql:mysql-connector-java')
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    //    testCompile('org.springframework.cloud:spring-cloud-starter-eureka-server')
     testCompile("com.github.springtestdbunit:spring-test-dbunit:${springDbUnitVersion}")
     testCompile("org.dbunit:dbunit:${dbUnitVersion}")
 }
