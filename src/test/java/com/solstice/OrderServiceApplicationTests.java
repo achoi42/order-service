@@ -1,16 +1,19 @@
 package com.solstice;
 
-import org.junit.Test;
+import com.solstice.repository.OrderLineItemRepositoryIntegrationTest;
+import com.solstice.repository.OrderRepositoryIntegrationTest;
+import com.solstice.service.OrderServiceIntegrationTest;
+import com.solstice.service.OrderServiceUnitTest;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(Suite.class)
+@SuiteClasses({
+    OrderLineItemRepositoryIntegrationTest.class,
+    OrderRepositoryIntegrationTest.class,
+    OrderServiceUnitTest.class,
+    OrderServiceIntegrationTest.class
+})
 public class OrderServiceApplicationTests {
-
-  @Test
-  public void contextLoads() {
-  }
-
 }
